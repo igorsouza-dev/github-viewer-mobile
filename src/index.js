@@ -1,5 +1,6 @@
 import React from 'react';
-import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
+import { StatusBar } from 'react-native';
+import Routes from './routes';
 
 if (__DEV__) {
   import('./config/ReactotronConfig').then(() =>
@@ -9,12 +10,11 @@ if (__DEV__) {
 
 const App = () => {
   return (
-    <SafeAreaView>
-      <Text>Hello Worldds!</Text>
-    </SafeAreaView>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#715c91" />
+      <Routes />
+    </>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default App;
