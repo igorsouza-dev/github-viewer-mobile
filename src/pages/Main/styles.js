@@ -24,7 +24,6 @@ export const Input = styled.TextInput.attrs({
   border: solid 1px #eee;
 `;
 
-// export const SubmitButton = styled.TouchableOpacity`
 export const SubmitButton = styled(RectButton)`
   background-color: #7159c1;
   border-radius: 4px;
@@ -33,4 +32,54 @@ export const SubmitButton = styled(RectButton)`
   font-size: 24px;
   padding: 0 12px;
   margin-left: 10px;
+`;
+
+export const List = styled.FlatList.attrs({
+  showVerticalScrollIndicator: false,
+})`
+  margin-top: 20px;
+`;
+
+export const User = styled.View`
+  align-items: center;
+  margin: 0 20px 30px;
+`;
+
+export const Avatar = styled.Image`
+  width: 64px;
+  height: 64px;
+  border-radius: 32px;
+  background: #eee;
+`;
+
+export const Name = styled.Text`
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  margin-top: 5px;
+  text-align: center;
+`;
+export const Bio = styled.Text.attrs({
+  numberOfLines: 2,
+})`
+  font-size: 13px;
+  line-height: 18px;
+  color: #999;
+  margin-top: 5px;
+  text-align: center;
+`;
+export const ProfileButton = styled(RectButton)`
+  margin-top: 10px;
+  align-self: stretch;
+  border-radius: 4px;
+  background: #7159c1;
+  height: 36px;
+  justify-content: center;
+  align-items: center;
+`;
+export const ProfileButtonText = styled.Text`
+  font-weight: bold;
+  font-size: 14px;
+  color: #fff;
+  text-transform: uppercase;
 `;
