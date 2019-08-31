@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Alert, Keyboard } from 'react-native';
+import { Alert, Keyboard, ActivityIndicator } from 'react-native';
 
 import api from '../../services/api';
 
@@ -24,11 +24,13 @@ export default class Main extends Component {
     this.state = {
       newUser: '',
       users: [],
+      loading: false,
     };
   }
 
   handleSubmit = async () => {
     const { users, newUser } = this.state;
+    this.setState({ loading: true });
     try {
       const response = await api.get(`/users/${newUser}`);
       const { data } = response;
@@ -39,16 +41,17 @@ export default class Main extends Component {
         avatar: data.avatar_url,
       };
 
-      this.setState({ users: [...users, user], newUser: '' });
+      this.setState({ users: [...users, user], newUser: '', loading: false });
 
       Keyboard.dismiss();
     } catch (e) {
       Alert.alert('Error!');
+      this.setState({ loading: false });
     }
   };
 
   render() {
-    const { users, newUser } = this.state;
+    const { users, newUser, loading } = this.state;
     return (
       <Container>
         <Form>
@@ -61,8 +64,12 @@ export default class Main extends Component {
             returnKeyType="send"
             onSubmitEditing={this.handleSubmit}
           />
-          <SubmitButton onPress={this.handleSubmit}>
-            <Icon name="add" color="#fff" size={20} />
+          <SubmitButton loading={loading} onPress={this.handleSubmit}>
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Icon name="add" color="#fff" size={20} />
+            )}
           </SubmitButton>
         </Form>
         <List
