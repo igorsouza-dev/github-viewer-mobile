@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert } from 'react-native';
+import { Alert, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 
 import api from '../../services/api';
@@ -33,23 +33,68 @@ export default class User extends Component {
     super();
     this.state = {
       stars: [],
+      loading: false,
+      page: 1,
+      refreshing: false,
     };
   }
 
-  async componentDidMount() {
-    const { navigation } = this.props;
-    const user = navigation.getParam('user');
-    try {
-      const response = await api.get(`/users/${user.login}/starred`);
-      const { data } = response;
-      this.setState({ stars: data });
-    } catch (e) {
-      Alert.alert('An error ocurred!');
-    }
+  componentDidMount() {
+    this.loadStars();
   }
 
+  getUser = () => {
+    const { navigation } = this.props;
+
+    const user = navigation.getParam('user');
+    return user;
+  };
+
+  loadStars = async () => {
+    const user = this.getUser();
+    const { page } = this.state;
+    try {
+      this.setState({ loading: true });
+      const response = await api.get(`/users/${user.login}/starred`, {
+        params: {
+          page,
+        },
+      });
+      const { data } = response;
+
+      this.setState({ stars: data, loading: false });
+    } catch (e) {
+      Alert.alert('An error ocurred!');
+      this.setState({ loading: false });
+    }
+  };
+
+  loadMore = async () => {
+    const { page, stars } = this.state;
+    const user = this.getUser();
+    const p = page + 1;
+    await this.setState({ page: p, loading: true });
+    try {
+      const response = await api.get(`/users/${user.login}/starred`, {
+        params: {
+          page: p,
+        },
+      });
+      const { data } = response;
+      this.setState({ stars: [...stars, ...data], loading: false });
+    } catch (e) {
+      Alert.alert('An error ocurred!');
+      this.setState({ loading: true });
+    }
+  };
+
+  refresh = async () => {
+    await this.setState({ page: 1 });
+    this.loadStars();
+  };
+
   render() {
-    const { stars } = this.state;
+    const { stars, loading, refreshing } = this.state;
     const { navigation } = this.props;
     const user = navigation.getParam('user');
     return (
@@ -59,9 +104,14 @@ export default class User extends Component {
           <Name>{user.name}</Name>
           <Bio>{user.bio}</Bio>
         </Header>
+        {loading && <ActivityIndicator />}
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
+          onEndReachedThreshold={0.2}
+          onEndReached={this.loadMore}
+          onRefresh={this.refresh}
+          refreshing={refreshing}
           renderItem={({ item }) => (
             <Starred>
               <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
