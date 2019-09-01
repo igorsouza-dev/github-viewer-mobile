@@ -16,6 +16,7 @@ import {
   Info,
   Title,
   Author,
+  NoStarsText,
 } from './styles';
 
 export default class User extends Component {
@@ -26,6 +27,7 @@ export default class User extends Component {
   static propTypes = {
     navigation: PropTypes.shape({
       getParam: PropTypes.func,
+      navigate: PropTypes.func,
     }).isRequired,
   };
 
@@ -93,6 +95,12 @@ export default class User extends Component {
     this.loadStars();
   };
 
+  openRepo = repo => {
+    const { navigation } = this.props;
+
+    navigation.navigate('Repo', { repo });
+  };
+
   render() {
     const { stars, loading, refreshing } = this.state;
     const { navigation } = this.props;
@@ -105,6 +113,9 @@ export default class User extends Component {
           <Bio>{user.bio}</Bio>
         </Header>
         {loading && <ActivityIndicator />}
+        {stars.length === 0 && !loading && (
+          <NoStarsText>This user hasn't starred any repository.</NoStarsText>
+        )}
         <Stars
           data={stars}
           keyExtractor={star => String(star.id)}
@@ -113,7 +124,7 @@ export default class User extends Component {
           onRefresh={this.refresh}
           refreshing={refreshing}
           renderItem={({ item }) => (
-            <Starred>
+            <Starred onPress={() => this.openRepo(item)}>
               <OwnerAvatar source={{ uri: item.owner.avatar_url }} />
               <Info>
                 <Title>{item.name}</Title>

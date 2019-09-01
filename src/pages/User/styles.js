@@ -38,7 +38,7 @@ export const Stars = styled.FlatList.attrs({
   margin-top: 20px;
 `;
 
-export const Starred = styled.View`
+export const Starred = styled.TouchableOpacity`
   background: #f5f5f5;
   border-radius: 4px;
   padding: 10px 15px;
@@ -67,4 +67,10 @@ export const Author = styled.Text`
   font-size: 13px;
   color: #666;
   margin-top: 2px;
+`;
+
+export const NoStarsText = styled.Text`
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
 `;
